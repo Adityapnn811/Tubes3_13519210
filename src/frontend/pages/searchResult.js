@@ -1,7 +1,9 @@
+import Layout from '../components/layout';
+
 export default function SearchResult({searchResult}){
     return (
-        <div>
+        <Layout>
             <h1>Hasil pencarian: {searchResult ? searchResult : "Hasil"}</h1>
-        </div>
+        </Layout>
     )
 }
