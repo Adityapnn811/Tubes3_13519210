@@ -1,13 +1,9 @@
 import {useState, useEffect} from 'react';
 import { useRef } from "react";
-import Link from 'next/link';
-import Image from 'next/image';
 import Head from 'next/head';
 import Layout from '../components/layout';
 import Header from '../components/header';
-import {Button, ButtonLink} from '../components/button';
-
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Roboto&display=swap" rel="stylesheet"></link>
+import {ButtonLink} from '../components/button';
 
 function SearchBar(){
     const clickPoint = useRef();
@@ -37,10 +33,6 @@ function SearchBar(){
 }
 
 export default function Homepage(){
-    const [jmlKlik, setJmlKlik] = useState(0);
-    function handleKlik(){
-        setJmlKlik(jmlKlik + 1);
-    }
     return (
         <Layout>
             <Head>
@@ -48,7 +40,7 @@ export default function Homepage(){
             </Head>
             <div className='flex h-screen justify-center items-center'>
                 <div className='text-center w-full'>
-                    <Header title="Do Not Arrest Website"/>
+                    <Header title="Do Not Arrest Website" className="text-6xl py-4 font-montserrat text-white"/>
                     <SearchBar/>
                     <ButtonLink 
                         text="Tes DNA Sekarang!" 
