@@ -8,10 +8,10 @@ var con = mysql.createConnection({
     port: 3306
 });
 
-async function main(query, callback) {
+async function main(query, args, callback) {
     await con.connect();
 
-    await con.query(query, async (error, results, fields) => {
+    await con.query(query, args, async (error, results, fields) => {
         if (error) callback(error, null);
 
         const data = {
