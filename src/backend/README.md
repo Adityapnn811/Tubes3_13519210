@@ -1,6 +1,10 @@
 ### Requirements
 - mariadb
 
+### Newest Addition
+- Added Azure MySQL Database that can be queried using querydb module
+- Disease database cleanup
+
 ### Need to Know
 - run on root user in mariadb
 ```
