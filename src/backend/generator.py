@@ -23,7 +23,7 @@ cur.execute(
     """CREATE TABLE disease(
         id_disease SERIAL UNIQUE PRIMARY KEY,
         name VARCHAR(200) NOT NULL,
-        sequence TEXT(10000) NOT NULL
+        sequence TEXT(100) NOT NULL
     );"""
 )
 
@@ -38,7 +38,7 @@ letters = ["A", "C", "G", "T"]
 for disease in diseases:
     s = ""
 
-    for i in range(10000):
+    for i in range(100):
         letter = letters[randint(0, 3)]
         s = s + letter
 
