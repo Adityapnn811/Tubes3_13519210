@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "node app.js",
-    "devStart": "nodemon app.js"
+    "start": "node app.js > ./api-logs/normal.log 2> ./api-logs/errors.log",
+    "devStart": "nodemon -q app.js > ./api-logs/normal.log 2> ./api-logs/errors.log"
   },
   "dependencies": {
     "body-parser": "^1.20.0",

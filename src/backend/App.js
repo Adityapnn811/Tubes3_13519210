@@ -7,13 +7,20 @@ const { levenshtein } = require('./levenshtein');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const Express = require('express');
+const { resolve } = require('path');
 const app = Express();
 
+// Use external middleware for Express
 app.use(cors());
 app.use(Express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post("/api/disease", async (req, res) => {
+// Constant for route strings, for non constant, declare var before route
+const POST_DISEASE = "/api/disease";
+const POST_KMP = "/api/kmp";
+const GET_PATIENTS = "/api/patients";
+
+app.post(POST_DISEASE, async (req, res) => {
     // pass data as json object
     const disease = req.body.disease;
     const sequence = req.body.sequence;
@@ -24,12 +31,9 @@ app.post("/api/disease", async (req, res) => {
         original: req.body
     });
 
-    query("INSERT INTO disease VALUES (DEFAULT, ?, ?)", [disease, sequence], (err, data) => {
-        // Catch unexpected error
-        if (err) return res.send({
-            error: err.message,
-            original: req.body
-        });
+    query("INSERT INTO disease VALUES (DEFAULT, ?, ?)", [disease, sequence]).then(
+    // On Success
+    (data) => {
         // Empty Return
         if (data.results === undefined) return res.send({
             error: "Query returns empty results, disease likely not reccorded in database.",
@@ -40,78 +44,141 @@ app.post("/api/disease", async (req, res) => {
             result: data,
             original: req.body
         })
+    },
+    // On Error
+    (err) => {
+        // Log that an error occured
+        console.error(`Error occurred in route: ${POST_DISEASE}`);
+        // Catch unexpected error
+        if (err) return res.send({
+            error: err.message,
+            original: req.body
+        });
     });
 });
 
-app.post("/api/kmp", async (req, res) => {
+app.post(POST_KMP, async (req, res) => {
     // pass data as json object
+    const name = req.body.name;
     const disease = req.body.disease;
     const body = req.body.patient_dna;
 
     // Catch unexpected original json
-    if (disease === undefined || body === undefined) return res.send({
+    if (name === undefined || disease === undefined || body === undefined)
+    return res.send({
         error: "Data Undefined",
         original: req.body
     });
 
     // query database
-    query("SELECT * FROM disease WHERE name=?", [disease], (err, data) => {
-        // Catch unexpected error
-        if (err) return res.send({
-            error: err.message,
-            original: req.body
-        });
+    query("SELECT * FROM disease WHERE name=?", [disease]).then(
+    // On Success
+    (data) => {
         // Empty Return
         if (data.results[0] === undefined) return res.send({
-            error: "Query returns empty results, disease likely not reccorded in database.",
+            error: "Query returns empty results, disease likely not recorded in database.",
             original: req.body
         });
 
         const sequence = data.results[0].sequence;
         var result = kmp(body, sequence);
+        var returnObj = { name: name, disease: disease, percentage: 0, afflicted: false, index: null };
+
         if (result[0]) {
             // Patient Afflicted 100%
-            return res.send({
-                afflicted: true,
-                index: result[0],
-                percentage: 100
-            });
+            returnObj.afflicted = true;
+            returnObj.index = result[0];
+            returnObj.percentage = 100;
         } else {
-            // Find closest
-            var afflicted = false;
-            var distance = levenshtein(body, sequence, result[1]);
-            var percentage = Math.round((1 - distance / sequence.length) * 100);
+            returnObj.index = result[1].index;
+            returnObj.percentage = Math.round(
+                (1 - levenshtein(body, sequence, result[1]) / sequence.length)
+                * 100);
             // If levenshtein returns over 80% match
-            if (percentage > 80) afflicted = true;
-            return res.send({
-                afflicted: afflicted,
-                index: result[1].index,
-                percentage: percentage
-            });
+            if (returnObj.percentage > 80) returnObj.afflicted = true;
         }
-    });
-});
+        // Pass Promise to database inserter
+        return new Promise((resolve, reject) => {
+            resolve(returnObj);
+        });
+    })
+    .then(
+    // Get returnObj
+    (data) => {
+        var arguments = new Array(4);
+        arguments[0] = data.name;
+        arguments[1] = data.disease;
+        arguments[2] = data.percentage;
+        arguments[3] = data.afflicted;
+        return new Promise(async (resolve, reject) => {
+            var status = await query("INSERT INTO patient VALUES(DEFAULT, ?, ?, DEFAULT, ?, ?)", arguments)
+            .then(
+            // Gotten Insert Status
+            (status) => { return status; });
+            resolve({
+                data: data,
+                status: status
+            });
+        })
+    })
+    .then(
+    // On Success
+    (all) => {
+        console.log(all);
+        // Empty Return
+        if (all.status.results === undefined) return res.send({
+            error: "Failed to insert into database.",
+            original: req.body
+        });
 
-app.get("/api/patients", async (req, res) => {
-    query("SELECT * FROM patient", [], (err, data) =>{
+        return res.send({
+            match_res: all.data,
+            status: all.status,
+            original: req.body
+        });
+    })
+    .catch(
+    // On Error
+    (err) => {
+        // Log that an error occured
+        console.error(`Error occurred in route: ${POST_KMP}`);
         // Catch unexpected error
         if (err) return res.send({
             error: err.message,
             original: req.body
         });
+    });
+});
+
+app.get(GET_PATIENTS, async (req, res) => {
+    query("SELECT * FROM patient", []).then(
+    // On Success
+    (data) => {
         // Empty Return
         if (data.results[0] === undefined) return res.send({
             error: "Query returns empty results, no patients exist yet.",
             original: req.body
         });
 
+        // Return result object
         return res.send({
             result: data,
+            original: req.body
+        });
+    })
+    .catch(
+    // On Error
+    (err) => {
+        // Log that an error occured
+        console.error(`Error occurred in route: ${GET_PATIENTS}`);
+        // Catch unexpected error
+        return res.send({
+            error: err.message,
             original: req.body
         });
     });
 });
 
 app.listen(3001, () => {
-    console.log("Running on port 3001");
+    console.log("INFO: Started on port 3001");
 });
