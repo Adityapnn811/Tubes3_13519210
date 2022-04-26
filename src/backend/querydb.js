@@ -11,7 +11,7 @@ var con = mysql.createConnection({
 async function main(query, args, callback) {
     await con.connect();
 
-    await con.query(query, args, async (error, results, fields) => {
+    con.query(query, args, async (error, results, fields) => {
         if (error) callback(error, null);
 
         const data = {

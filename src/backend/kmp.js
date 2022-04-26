@@ -1,21 +1,22 @@
 function main(body, sequence) {
-        const fail = computeFail(sequence);
-        var nearest = { index: 0, length: 0 };
-        var i = 0, j = 0;
-        while (i < body.length) {
-            if (sequence.charAt(j) === body.charAt(i)) {
-                if (j === sequence.length - 1) return [i - sequence.length + 1, null];
-                i++; j++;
-            }
-            else if (j > 0) {
-                if (j > nearest.length - 1) { nearest.index = i - j; nearest.length = j + 1} // Addition to calculate bonus
-                j = fail[j - 1];
-            }
-            else {
-                i++;
-            }
+    const fail = computeFail(sequence);
+    var nearest = { index: 0, length: 0 };
+    var i = 0, j = 0;
+    while (i < body.length) {
+        if (sequence.charAt(j) === body.charAt(i)) {
+            if (j === sequence.length - 1) return [i - sequence.length + 1, null];
+            i++; j++;
         }
-        return [null, nearest];
+        else if (j > 0) {
+            if (j > nearest.length - 1) { nearest.index = i - j; nearest.length = j + 1; } // Addition to calculate bonus
+            j = fail[j - 1];
+        }
+        else {
+            i++;
+        }
+    }
+    if (j > nearest.length - 1) { nearest.index = i - j; nearest.length = j + 1; }
+    return [null, nearest];
 };
 
 function computeFail(sequence) {
