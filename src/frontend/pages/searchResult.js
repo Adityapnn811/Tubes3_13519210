@@ -105,6 +105,7 @@ export default function SearchResult({}){
     // Inisiasi variabel query
     const query = useRouter().query;
 
+    // Fungsi yang iterasi result
     const createResultCard = () => {
         var rows = []
         dataPenyakit.forEach(e => {
@@ -115,6 +116,7 @@ export default function SearchResult({}){
         })
         return rows.map((row) => row);
     }
+
     return (
         <Layout>
             <div className="flex flex-col justify-center">
