@@ -80,8 +80,13 @@ export default function Homepage(){
                     <SearchBar/>
                     <ButtonLink 
                         text="Tes DNA Sekarang!" 
-                        className={"bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg my-4"}
+                        className={"bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg my-4 mx-2"}
                         href="/tesDNA"
+                    />
+                    <ButtonLink 
+                        text="Masukkan DNA Penyakit" 
+                        className={"bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg my-4 mx-2"}
+                        href="/insertDNA"
                     />
                 </div>
             </div>

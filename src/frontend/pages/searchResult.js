@@ -78,7 +78,7 @@ function ResultCard({text}){
     return(
         
         <div className="w-4/5 text-left bg-white/80 px-6 py-3 rounded-lg mb-4">
-            <h1 className="text-3xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected"}</h1>
+            <h1 className="text-3xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected - Kemiripan"}</h1>
         </div>
     )
 }
@@ -90,13 +90,15 @@ export default function SearchResult({}){
             nama: "Aditya",
             tanggal: "13 April 2020",
             penyakit: "Covid 19",
-            isInfected: true
+            isInfected: true,
+            kemiripan: 0.8
         },
         {
             nama: "Marques",
             tanggal: "13 April 2020",
             penyakit: "Herpes",
-            isInfected: false
+            isInfected: false,
+            kemiripan: 0.8
         },
     ]
 
@@ -107,7 +109,7 @@ export default function SearchResult({}){
         var rows = []
         dataPenyakit.forEach(e => {
             if (e.tanggal == query["tanggal"] || e.penyakit == query["penyakit"]){
-                let stringResult = e.nama + " - " + e.tanggal + " - " + e.penyakit + " - " + e.isInfected
+                let stringResult = e.nama + " - " + e.tanggal + " - " + e.penyakit + " - " + e.isInfected + " - " + e.kemiripan
                 rows.push(<ResultCard text={stringResult}/>)
             }
         })
