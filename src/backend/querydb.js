@@ -10,12 +10,11 @@ var con = mysql.createPool({
 
 async function main(query, args, callback) {
     await con.getConnection((err, connection) => {
-        if (err) callback(err, null);
+        if (err) return callback(err, null);
         connection.query(query, args, (error, results, fields) => {
-
             if (error) {
                 connection.release();
-                callback(error, null);
+                return callback(error, null);
             }
 
             const data = {
@@ -23,7 +22,7 @@ async function main(query, args, callback) {
                 results: results,
             }
 
-            callback(null, data);
+            return callback(null, data);
         });
     });
 };
