@@ -1,17 +1,22 @@
+// Api Imports
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const Express = require('express');
+require('dotenv').config();
+
+// Environment Import
+const PORT = process.env.PORT || '3001';
+
 // Library Imports
 const { query } = require('./querydb');
 const { kmp } = require('./kmp');
 const { levenshtein } = require('./levenshtein');
 
-// Api Imports
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const Express = require('express');
-const { resolve } = require('path');
+// Express Initialization
 const app = Express();
 
-// Use external middleware for Express
-app.use(cors());
+// Middleware Initialization
+app.use(cors({ origin: process.env.DOMAIN || '*'}));
 app.use(Express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -179,6 +184,6 @@ app.get(GET_PATIENTS, async (req, res) => {
     });
 });
 
-app.listen(3001, () => {
-    console.log("INFO: Started on port 3001");
+app.listen(PORT, () => {
+    console.log(`INFO: Started on port: ${PORT}`);
 });

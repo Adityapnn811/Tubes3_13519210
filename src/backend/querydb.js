@@ -1,15 +1,15 @@
 const mysql = require('mysql');
 
-var con = mysql.createPool({
-    host:     "donotarrest-server.mysql.database.azure.com",
-    user:     "dnaadmin@donotarrest-server",
-    password: "Tubes@IF2211",
-    database: "dna",
+const con = mysql.createPool({
+    host:     process.env.DB_HOST,
+    user:     process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
     port:     3306
 });
 
 async function main(query, args) {
-    return await new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         con.getConnection((err, connection) => {
             if (err) return reject(err);
 
