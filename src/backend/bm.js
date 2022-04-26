@@ -40,17 +40,3 @@ function lp(sequence){
 }
 
 module.exports.bm = main;
-
-body = "AGGTAGATGAAACCC"
-sequence = "ACGTAG"
-console.log(main(body, sequence))
-
-// body = "AGGTAGATGAAACCC"
-// sequence = "ACGTAG"
-// out: [ null, { start_idx: 2, length: 4 } ]
-
-// body = "AGGTAAATGAAACCC"
-// sequence = "ACGTAG"
-// out: [ null, { start_idx: 0, length: 0 } ]
-// To process "nearest" in above code, it is is quite dependent on the equaility 
-// between element on inew and sequence.length-1
