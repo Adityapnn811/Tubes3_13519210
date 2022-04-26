@@ -2,7 +2,7 @@ function sanitate(inputDNA){
     return inputDNA.toUpperCase().replace(/[^(A|C|G|T)]/g, "")
 }
 
-function isDateDiseaseValidated(inputDateDisease){
+function isDateDiseaseValidated(inputDateDisease, listOfDiseases){
 // Return true if data and disease inputs are valid
 
 // Valid:
@@ -27,18 +27,25 @@ function isDateDiseaseValidated(inputDateDisease){
                     "Desember"  : "12",
                 };
 
-    var listInputDisease = inputDateDisease.split(regex_delimiter); // [dd, mm|[Januari-Desember], yyyy, disease]
-    if (listInputDisease[1] in dict){
-        listInputDisease[1] = dict[listInputDisease[1]];
+    var listInputDateDisease = inputDateDisease.split(regex_delimiter); // [dd, mm|[Januari-Desember], yyyy, disease]
+    if (listInputDateDisease[1] in dict){
+        listInputDateDisease[1] = dict[listInputDateDisease[1]];
     }
 
-    var date = listInputDisease.slice(0, 3).join('-'); // dd-mm-yyyy
-    var disease = listInputDisease[3]; // disease
-
-    // dd-mm-yyyy, leap year reviewed
+    var date = listInputDateDisease.slice(0, 3).join('-'); // dd-mm-yyyy
     var regex_date = new RegExp(/^(((0[1-9]|[12]\d|3[01])\-(0[13578]|1[02])\-((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\-(0[13456789]|1[012])\-((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\-02\-((19|[2-9]\d)\d{2}))|(29\-02\-((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$/g);
+    // dd-mm-yyyy, leap year reviewed
+    
+    var disease = listInputDateDisease[3]; // disease
+    let isDiseaseRecognized = false;
 
-    return regex_date.test(date);
+    for (let i = 0; i < listOfDiseases.length; ++i){
+        if (disease === listOfDiseases[i]){
+            isDiseaseRecognized = true;
+        }
+    }
+
+    return regex_date.test(date) && isDiseaseRecognized;
 }
 
 module.exports.regex = sanitate;
