@@ -59,7 +59,24 @@ app.post("/api/kmp", async (req, res) => {
                 percentage: percentage
             });
         }
-    })
+    });
+});
+
+app.get("/api/patients", async (req, res) => {
+    query("SELECT * FROM patient", [], (err, data) =>{
+        // Catch unexpected error
+        if (err) return res.send({
+            error: err.message,
+            original: req.body
+        });
+        // Empty Return
+        if (data.results[0] === undefined) return res.send({
+            error: "Query returns empty results, no patients exist yet.",
+            original: req.body
+        });
+
+        res.send(data);
+    });
 });
 
 app.listen(3001, () => {
