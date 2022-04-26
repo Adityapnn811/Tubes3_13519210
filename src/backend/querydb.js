@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-var con = mysql.createConnection({
+var con = mysql.createPool({
     host: "donotarrest-server.mysql.database.azure.com",
     user: "dnaadmin@donotarrest-server",
     password: "Tubes@IF2211",
@@ -9,19 +9,22 @@ var con = mysql.createConnection({
 });
 
 async function main(query, args, callback) {
-    await con.connect();
+    await con.getConnection((err, connection) => {
+        if (err) callback(err, null);
+        connection.query(query, args, (error, results, fields) => {
 
-    con.query(query, args, async (error, results, fields) => {
-        if (error) callback(error, null);
+            if (error) {
+                connection.release();
+                callback(error, null);
+            }
 
-        const data = {
-            fields: fields,
-            results: results,
-        }
+            const data = {
+                fields: fields,
+                results: results,
+            }
 
-        await con.end();
-
-        callback(null, data);
+            callback(null, data);
+        });
     });
 };
 
