@@ -25,10 +25,6 @@ function Form(){
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
-
-        const data = new FormData();
-        data.append('disease', form.penyakit.value);
-        data.append('sequence', isiFile);
         
         // Tunggu Backend dulu
         const endpoint = 'https://do-not-arrest.herokuapp.com/api/disease';
@@ -43,8 +39,6 @@ function Form(){
 
         const result = await response.json();
         console.log(result);
-        console.log(data.get('disease'));
-        console.log(data.get('sequence'));
     }
 
     return(

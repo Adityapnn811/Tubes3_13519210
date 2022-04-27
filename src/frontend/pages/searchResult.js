@@ -96,29 +96,33 @@ export default function SearchResult(){
         if (dataPenyakit){
             var rows = []
             var found = false;
+            var i = 1;
             dataPenyakit["result"]["results"].forEach(e => {
                 let dateFromRes = e["checkup_date"].slice(0, 10);
                 // Cek apakah query tanggal kosong
                 if (!query["penyakit"]){
                     if (dateFromRes == query["tanggal"]){
                         let infected = e["Afflicted"] ? "True" : "False"
-                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
-                        found = true
+                        let stringResult = i + ".\t" + e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
                         rows.push(<ResultCard text={stringResult}/>)
+                        found = true
+                        i++
                     }
                 } else if (!query["tanggal"]){
                     if (e["disease"] == query["penyakit"]){
                         let infected = e["Afflicted"] ? "True" : "False"
-                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
+                        let stringResult = i + ".\t" + e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
                         rows.push(<ResultCard text={stringResult}/>)
                         found = true
+                        i++
                     }
                 } else if (query["tanggal"] && query["penyakit"]) {
                     if (dateFromRes === query["tanggal"] && e["disease"] === query["penyakit"]){
                         let infected = e["Afflicted"] ? "True" : "False"
-                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
+                        let stringResult = i + ".\t" + e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
                         rows.push(<ResultCard text={stringResult}/>)
                         found = true
+                        i++
                     }
                 }
             })

@@ -2,14 +2,16 @@ import Layout from '../components/layout';
 import Header from '../components/header';
 import {Button, ButtonLink} from '../components/button';
 import {useState} from 'react';
-
+import moment from "moment";
 
 function Form(){
-    const [selectedFile, setSelectedFile] = useState(null);
     const [isiFile, setIsiFile] = useState("");
+    const [algoChoice, setAlgoChoice] = useState("KMP");
+    const [result, setResult] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
         setIsiFile("");
         let fr = new FileReader();
         fr.readAsText(e.target.files[0]);
@@ -18,32 +20,55 @@ function Form(){
         };
     }
 
+    const handleRadioChange = (e) => {
+        setAlgoChoice(e.target.value);
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
+        setHasSubmitted(true);
+        if (algoChoice === "KMP"){
+            const endpoint = 'https://do-not-arrest.herokuapp.com/api/kmp';
+            
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({name:form.nama.value ,disease: form.penyakit.value, patient_dna: isiFile}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setResult(await response.json());
+            
+            setIsLoading(false);
+            
+        } else {
+            const endpoint = 'https://do-not-arrest.herokuapp.com/api/bm';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({name:form.nama.value ,disease: form.penyakit.value, patient_dna: isiFile}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setResult(await response.json());
+            setIsLoading(false);
+            console.log(result);
+        }
+    }
 
-        const data = new FormData();
-        data.append('nama', form.nama.value);
-        data.append('penyakit', form.penyakit.value);
-        data.append('DNA', isiFile);
-        // const dataJSON = JSON.stringify(data);
-        
-        // Tunggu Backend dulu
-        // const endpoint = 'http://localhost:3000/api/tes';
-
-        // const response = await fetch('/api/tesDNA', {
-        //     method: 'POST',
-        //     body: data,
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
-
-        // const result = await response.json();
-        // console.log(result);
-        console.log(data.get('nama'));
-        console.log(data.get('penyakit'));
-        console.log(data.get('DNA'));
+    const createResult = () => {
+        if (isLoading && hasSubmitted){
+            return <ResultCard text={"Testing..."}/>
+        } else if (hasSubmitted && !isLoading) {
+            console.log(result["match_res"]);
+            var infected = result["match_res"]["afflicted"] ? "True" : "False"
+            var date = moment().format("YYYY-MM-DD")
+            console.log(date)
+            var string = (result["match_res"]["name"] + " - " + date + " - " + result["match_res"]["disease"] + " - " + infected + " - " + result["match_res"]["percentage"] + "%")
+            console.log(string)
+            return <ResultCard text={string}/>
+        }
     }
 
     return(
@@ -64,21 +89,34 @@ function Form(){
                     <input onChange={handleFileChange} className="block w-full text-sm text-gray-900 rounded-lg cursor-pointer text-white bg-gray-700/20 border-gray-600 placeholder-gray-400" aria-describedby="user_avatar_help" id="sekuens_DNA" type="file" accept='.txt' required></input>
                     <div className="mt-1 text-sm font-montserrat" id="sekuens_DNA_help">Sebuah file .txt yang berisi sekuens DNA</div>
                 </div>
+                <p className='mb-1 items-center text-left font-montserrat'>Algoritma untuk tes</p>
+                <fieldset>
+                    <div onChange={handleRadioChange}>
+                        <div className='items-center text-left' >
+                            <input id="kmp" name="algo" value="KMP" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 mr-3" defaultChecked  type="radio" required></input>
+                            <label className="font-montserrat align-text-left" htmlFor="kmp">Knuth-Morris-Pratt</label>
+                        </div>
+                        <div className='mb-6 items-center text-left' >
+                            <input id="bm" name="algo" value="BM" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 mr-3" type="radio" required></input>
+                            <label className="font-montserrat align-text-left" htmlFor="bm">Boyer-Moore</label>
+                        </div>
+                    </div>
+                </fieldset>
                 <Button
                     text="Tes!" 
                     className={"bg-cyan-500 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg mb-4"} 
                     type="submit"
                 />
             </form>
+            {createResult()}
         </div>
     )
 }
 
 function ResultCard({text}){
     return(
-        
-        <div className="w-4/5 text-left bg-white/80 px-6 py-3 rounded-lg mb-4">
-            <h1 className="text-3xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected - Kemiripan"}</h1>
+        <div className="w-full text-center bg-white/80 px-6 py-3 rounded-lg mt-4">
+            <h1 className="text-xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected - Kemiripan"}</h1>
         </div>
     )
 }
