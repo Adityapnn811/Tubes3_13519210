@@ -1,9 +1,8 @@
 import Layout from '../components/layout';
 import Header from '../components/header';
-import { useRef } from "react";
 import {ButtonLink, Button} from '../components/button';
 import { useRouter } from 'next/router';
-import {useState} from 'react';
+import {useEffect, useState, useRef} from 'react';
 
 function SearchBar(){
     const [queryTanggal, setQueryTanggal] = useState("");
@@ -20,8 +19,8 @@ function SearchBar(){
 
     const handleInputField = async (e) => {
         e.preventDefault();
-        const regex1 = /(\d{1,2} [A-Z][a-z]* \d{4})* *([a-zA-Z0-9].*)*/g; // tanggal<spasi>penyakit
-        const regex2 = /([a-zA-Z0-9].*)* *(\d{1,2} [A-Z][a-z]* \d{4})*/g; // penyakit<spasi>tanggal
+        const regex1 = /(\d{4}-\d{2}-\d{2})* *([a-zA-Z0-9].*)*/g; // tanggal<spasi>penyakit
+        const regex2 = /([a-zA-Z0-9].*)* *(\d{4}-\d{2}-\d{2})*/g; // penyakit<spasi>tanggal
         
         const input = document.getElementById('searchInput').value;
         
@@ -30,8 +29,6 @@ function SearchBar(){
         if (match1){
             setQueryTanggal(match1[0][1]);
             setQueryPenyakit(match1[0][2]);
-            // console.log(match1[0])
-            // console.log(queryTanggal + "-" + queryPenyakit)
             setInputValid(true);
         } else if (match2){
             setQueryPenyakit(match1[0][1]);
@@ -42,13 +39,6 @@ function SearchBar(){
         // jgn lupa dicomment
         // console.log(searchQuery)
     }
-
-    // // cari saat klik enter
-    // document.getElementById('search').onkeydown = function(e){
-    //     if(e.key == "Enter"){
-    //       // submit
-    //     }
-    //  };
 
     return (
     <div className="items-center px-4 flex justify-center w-full mb-6" >
@@ -78,43 +68,67 @@ function ResultCard({text}){
     return(
         
         <div className="w-4/5 text-left bg-white/80 px-6 py-3 rounded-lg mb-4">
-            <h1 className="text-3xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected - Kemiripan"}</h1>
+            <h1 className="text-2xl font-montserrat text-black">{text ? text : "Tanggal - Nama - Penyakit - isInfected - Kemiripan"}</h1>
         </div>
     )
 }
 
-export default function SearchResult({}){
+export default function SearchResult(){
     // Ini nanti diganti ke fetch dari api
-    const dataPenyakit = [
-        {
-            nama: "Aditya",
-            tanggal: "13 April 2020",
-            penyakit: "Covid 19",
-            isInfected: true,
-            kemiripan: 0.8
-        },
-        {
-            nama: "Marques",
-            tanggal: "13 April 2020",
-            penyakit: "Herpes",
-            isInfected: false,
-            kemiripan: 0.8
-        },
-    ]
-
+    const [dataPenyakit, setDataPenyakit] = useState(null)
+    const [isLoading, setLoading] = useState(false)
+    
+    useEffect(() => {
+        setLoading(true)
+        fetch('https://do-not-arrest.herokuapp.com/api/patients')
+        .then(res => res.json())
+        .then((data) => {
+            setDataPenyakit(data)
+            setLoading(false)
+            // console.log(data)
+        })
+    }, [])
     // Inisiasi variabel query
     const query = useRouter().query;
 
     // Fungsi yang iterasi result
     const createResultCard = () => {
-        var rows = []
-        dataPenyakit.forEach(e => {
-            if (e.tanggal == query["tanggal"] || e.penyakit == query["penyakit"]){
-                let stringResult = e.nama + " - " + e.tanggal + " - " + e.penyakit + " - " + e.isInfected + " - " + e.kemiripan
-                rows.push(<ResultCard text={stringResult}/>)
+        if (dataPenyakit){
+            var rows = []
+            var found = false;
+            dataPenyakit["result"]["results"].forEach(e => {
+                let dateFromRes = e["checkup_date"].slice(0, 10);
+                // Cek apakah query tanggal kosong
+                if (!query["penyakit"]){
+                    if (dateFromRes == query["tanggal"]){
+                        let infected = e["Afflicted"] ? "True" : "False"
+                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
+                        found = true
+                        rows.push(<ResultCard text={stringResult}/>)
+                    }
+                } else if (!query["tanggal"]){
+                    if (e["disease"] == query["penyakit"]){
+                        let infected = e["Afflicted"] ? "True" : "False"
+                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
+                        rows.push(<ResultCard text={stringResult}/>)
+                        found = true
+                    }
+                } else if (query["tanggal"] && query["penyakit"]) {
+                    if (dateFromRes === query["tanggal"] && e["disease"] === query["penyakit"]){
+                        let infected = e["Afflicted"] ? "True" : "False"
+                        let stringResult = e["nama"] + " - " + dateFromRes + " - " + e["disease"] + " - " + infected+ " - " + e["Percentage"] + "%"
+                        rows.push(<ResultCard text={stringResult}/>)
+                        found = true
+                    }
+                }
+            })
+            if (!found){
+                rows.push(<ResultCard text={"Data tidak ditemukan"}/>)
             }
-        })
-        return rows.map((row) => row);
+            return rows.map((row) => row);
+        } else {
+            return <ResultCard text="Loading..."/>
+        }
     }
 
     return (

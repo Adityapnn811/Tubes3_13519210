@@ -27,34 +27,24 @@ function Form(){
         const form = e.target;
 
         const data = new FormData();
-        // const regexDNA = /[ATCG]+/g;
-        // if(regexDNA.test(isiFile)){
-        //     setSequenceValid(true);
-        // } else {
-        //     console.log("ISI FILE SETELAH TES")
-        //     console.log(isiFile);
-        //     setSequenceValid(false);
-        // }
-        
-        data.append('penyakit', form.penyakit.value);
-        data.append('DNA', isiFile);
-        // const dataJSON = JSON.stringify(data);
+        data.append('disease', form.penyakit.value);
+        data.append('sequence', isiFile);
         
         // Tunggu Backend dulu
-        // const endpoint = 'http://localhost:3000/api/tes';
+        const endpoint = 'https://do-not-arrest.herokuapp.com/api/disease';
 
-        // const response = await fetch('/api/tesDNA', {
-        //     method: 'POST',
-        //     body: data,
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     }
-        // });
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body: JSON.stringify({disease: form.penyakit.value, sequence: isiFile}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
 
-        // const result = await response.json();
-        // console.log(result);
-        console.log(data.get('penyakit'));
-        console.log(data.get('DNA'));
+        const result = await response.json();
+        console.log(result);
+        console.log(data.get('disease'));
+        console.log(data.get('sequence'));
     }
 
     return(

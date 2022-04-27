@@ -17,11 +17,13 @@ function ButtonLink({text, clickHandler, href, className, tanggal, penyakit, id}
     const handleClick = (e) => {
         e.preventDefault();
         if (tanggal || penyakit){
+            let varTanggal = tanggal ? tanggal : null;
+            let varPenyakit = penyakit ? penyakit : null;
             router.push({
                 pathname: href,
                 query: {
-                    tanggal: tanggal,
-                    penyakit: penyakit
+                    tanggal: varTanggal,
+                    penyakit: varPenyakit
                 }
             });
         } else if (!tanggal && !penyakit) {
