@@ -2,13 +2,24 @@ import Layout from '../components/layout';
 import Header from '../components/header';
 import {Button, ButtonLink} from '../components/button';
 import {useState} from 'react';
-import Router from 'next/router'
-import NoSSR from '../components/noSSR';
+
+
+function Konfirmasi({type, text}){
+    var classN;
+    type === "success" ? classN="flex flex-col items-center justify-center bg-green-500 px-10 rounded-lg" : classN="flex flex-col items-center justify-center bg-red-500 px-10 rounded-lg";
+    return(
+        <div className={classN}>
+            <p className="text-xl font-montserrat text-center">{text}</p>
+        </div>
+    )
+}
 
 function Form(){
     // const [selectedFile, setSelectedFile] = useState(null);
     const [isiFile, setIsiFile] = useState("");
     const [sequenceValid, setSequenceValid] = useState(false);
+    const [message, setMessange] = useState("");
+    const [resStatus, setResStatus] = useState("");
     
     const handleFileChange = (e) => {
         // setSelectedFile(e.target.files[0]);
@@ -38,7 +49,22 @@ function Form(){
         });
 
         const result = await response.json();
+        if (!result["error"]){
+            setMessange("Berhasil submit!");
+            setResStatus("success");
+        } else {
+            setMessange("Gagal submit!");
+            setResStatus("gagal");
+        }
         console.log(result);
+    }
+
+    const renderKonfimasi = () => {
+        if (resStatus === "success"){
+            return <Konfirmasi type="success" text={message}/>
+        } else if (resStatus === "gagal"){
+            return <Konfirmasi type="gagal" text={message}/>
+        }
     }
 
     return(
@@ -60,6 +86,7 @@ function Form(){
                     type="submit"
                 />
             </form>
+            {renderKonfimasi()}
         </div>
     )
 }

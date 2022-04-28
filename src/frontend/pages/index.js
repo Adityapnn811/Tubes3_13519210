@@ -4,7 +4,6 @@ import Head from 'next/head';
 import Layout from '../components/layout';
 import Header from '../components/header';
 import {ButtonLink, Button} from '../components/button';
-import {useRouter} from 'next/router';
 
 function SearchBar(){
     const [queryTanggal, setQueryTanggal] = useState("");

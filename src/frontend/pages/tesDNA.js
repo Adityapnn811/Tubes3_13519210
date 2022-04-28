@@ -39,6 +39,7 @@ function Form(){
                 }
             });
             setResult(await response.json());
+            // console.log(await response.json());
             
             setIsLoading(false);
             
@@ -53,7 +54,7 @@ function Form(){
             });
             setResult(await response.json());
             setIsLoading(false);
-            console.log(result);
+            // console.log(result);
         }
     }
 
@@ -61,13 +62,19 @@ function Form(){
         if (isLoading && hasSubmitted){
             return <ResultCard text={"Testing..."}/>
         } else if (hasSubmitted && !isLoading) {
-            console.log(result["match_res"]);
-            var infected = result["match_res"]["afflicted"] ? "True" : "False"
-            var date = moment().format("YYYY-MM-DD")
-            console.log(date)
-            var string = (result["match_res"]["name"] + " - " + date + " - " + result["match_res"]["disease"] + " - " + infected + " - " + result["match_res"]["percentage"] + "%")
-            console.log(string)
+            var string = "Gagal";
+            if (!result["error"]){
+                // console.log(result["match_res"]);
+                var infected = result["match_res"]["afflicted"] ? "True" : "False"
+                var date = moment().format("YYYY-MM-DD")
+                // console.log(date)
+                string = (result["match_res"]["name"] + " - " + date + " - " + result["match_res"]["disease"] + " - " + infected + " - " + result["match_res"]["percentage"] + "%")
+                // console.log(string)
+            } else {
+                string = result["error"]
+            }
             return <ResultCard text={string}/>
+            // return <ResultCard text="Gagal"/>
         }
     }
 
