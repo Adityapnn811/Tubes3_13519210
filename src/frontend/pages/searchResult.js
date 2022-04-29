@@ -27,7 +27,7 @@ function SearchBar(){
         
         const match1 = [...input.matchAll(regex1)];
         const match2 = [...input.matchAll(regex2)];
-        if (match1 && !match2){
+        if (match1){
             setQueryTanggal(match1[0][1]);
             setQueryPenyakit(match1[0][2]);
             setInputValid(true);
