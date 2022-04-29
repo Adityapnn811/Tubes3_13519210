@@ -1,7 +1,7 @@
 function sanitate(inputDNA){
     const regexDNA = /^[ATCG]+$/;
     if (regexDNA.test(inputDNA)){
-        return inputDNA.toUpperCase().replace(/[^(A|C|G|T)]/g, "")
+        return inputDNA
     } else {
         return ""
     }
