@@ -142,7 +142,7 @@ app.post(POST_KMP, async (req, res) => {
         var result = kmp(body, sequence);
         var returnObj = { name: name, disease: disease, percentage: 0, afflicted: false, index: null };
 
-        if (result[0]) {
+        if (result[0] != null) {
             // Patient Afflicted 100%
             returnObj.afflicted = true;
             returnObj.index = result[0];
@@ -266,7 +266,7 @@ app.post(POST_BM, async (req, res) => {
         var result = bm(body, sequence);
         var returnObj = { name: name, disease: disease, percentage: 0, afflicted: false, index: null };
 
-        if (result[0]) {
+        if (result[0] != null) {
             // Patient Afflicted 100%
             returnObj.afflicted = true;
             returnObj.index = result[0];
