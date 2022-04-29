@@ -1,5 +1,10 @@
 function sanitate(inputDNA){
-    return inputDNA.toUpperCase().replace(/[^(A|C|G|T)]/g, "")
+    const regexDNA = /^[ATCG]+$/;
+    if (regexDNA.test(inputDNA)){
+        return inputDNA.toUpperCase().replace(/[^(A|C|G|T)]/g, "")
+    } else {
+        return ""
+    }
 }
 
 function isDateDiseaseValidated(inputDateDisease, listOfDiseases){
