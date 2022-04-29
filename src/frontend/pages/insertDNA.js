@@ -21,6 +21,7 @@ function Form(){
     const [sequenceValid, setSequenceValid] = useState(false);
     const [message, setMessange] = useState("");
     const [resStatus, setResStatus] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     
     const handleFileChange = (e) => {
         // setSelectedFile(e.target.files[0]);
@@ -37,6 +38,7 @@ function Form(){
     const handleSubmit = async (e) => {
         e.preventDefault();
         const form = e.target;
+        setIsLoading(true);
         
         // Tunggu Backend dulu
         const endpoint = 'https://do-not-arrest.herokuapp.com/api/disease';
@@ -52,19 +54,23 @@ function Form(){
         const result = await response.json();
         if (!result["error"]){
             setMessange("Berhasil submit!");
+            setIsLoading(false);
             setResStatus("success");
         } else {
             setMessange("Gagal submit!");
+            setIsLoading(false);
             setResStatus("gagal");
         }
         console.log(result);
     }
 
     const renderKonfimasi = () => {
-        if (resStatus === "success"){
+        if (resStatus === "success" && !isLoading){
             return <Konfirmasi type="success" text={message}/>
-        } else if (resStatus === "gagal"){
+        } else if (resStatus === "gagal" && !isLoading){
             return <Konfirmasi type="gagal" text={message}/>
+        } else {
+            return <p>Loading...</p>
         }
     }
 
