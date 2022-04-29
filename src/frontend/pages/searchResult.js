@@ -137,6 +137,9 @@ export default function SearchResult(){
 
     return (
         <Layout>
+            <Head>
+                <title>DNA</title>
+            </Head>
             <div className="flex flex-col justify-center">
                 <div>
                     <ButtonLink text="Kembali" href="/" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg mt-5 ml-8" />
