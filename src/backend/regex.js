@@ -1,7 +1,7 @@
 function sanitate(inputDNA){
     const regexDNA = /^[ATCG]+$/;
     const match = [...inputDNA.matchAll(regexDNA)];
-    if (regexDNA.test(inputDNA) && !(match.length > 2)){
+    if (regexDNA.test(inputDNA) && !(match.length > 1)){
         return inputDNA
     } else {
         return ""
