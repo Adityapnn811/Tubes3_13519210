@@ -27,12 +27,12 @@ function SearchBar(){
         
         const match1 = [...input.matchAll(regex1)];
         const match2 = [...input.matchAll(regex2)];
-        if (match1){
+        if (match1 && !match2){
             setQueryTanggal(match1[0][1]);
             setQueryPenyakit(match1[0][2]);
             setInputValid(true);
         } 
-        if (match2){
+        else if (match2){
             setQueryPenyakit(match2[0][1]);
             setQueryTanggal(match2[0][2]);
             setInputValid(true);
