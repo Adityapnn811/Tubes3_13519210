@@ -3,6 +3,7 @@ import Header from '../components/header';
 import {Button, ButtonLink} from '../components/button';
 import {useState} from 'react';
 import moment from "moment";
+import Head from 'next/head';
 
 function Form(){
     const [isiFile, setIsiFile] = useState("");

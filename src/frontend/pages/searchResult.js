@@ -3,6 +3,7 @@ import Header from '../components/header';
 import {ButtonLink, Button} from '../components/button';
 import { useRouter } from 'next/router';
 import {useEffect, useState, useRef} from 'react';
+import Head from 'next/head';
 
 function SearchBar(){
     const [queryTanggal, setQueryTanggal] = useState("");

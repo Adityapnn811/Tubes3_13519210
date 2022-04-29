@@ -2,6 +2,7 @@ import Layout from '../components/layout';
 import Header from '../components/header';
 import {Button, ButtonLink} from '../components/button';
 import {useState} from 'react';
+import Head from 'next/head';
 
 
 function Konfirmasi({type, text}){
