@@ -1,6 +1,5 @@
 function sanitate(inputDNA){
     const regexDNA = /^[ATCG]+$/g;
-    const match = [...inputDNA.matchAll(regexDNA)];
     if (regexDNA.test(inputDNA)){
         return inputDNA
     } else {
