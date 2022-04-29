@@ -15,6 +15,10 @@
     1. `name`: "`patient name`"
     2. `disease`: "`suspected patient disease`"
     3. `patient_dna`: "`sequence string`"
+  - POST: `/api/bm` -> bm + levenshtein returns json object `{ match_res, status, original }`, requires:
+    1. `name`: "`patient name`"
+    2. `disease`: "`suspected patient disease`"
+    3. `patient_dna`: "`sequence string`"
 - Notes:
   - `result` is always query return value `{ fields, results }`
   - `match_res` is result of string matching and `status` is result of data insertion into database
@@ -23,6 +27,7 @@
 - Added Azure MySQL Database that can be queried using querydb module
 - Disease database cleanup
 - Added KMP algorithm for pattern matching with longest matching string memmory if fail
+- Added BM algorithm with same functionality as KMP
 
 ### Need to Know
 - run on root user in mysql or mariadb
