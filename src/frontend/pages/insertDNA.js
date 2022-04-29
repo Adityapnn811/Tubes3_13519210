@@ -69,7 +69,7 @@ function Form(){
             return <Konfirmasi type="success" text={message}/>
         } else if (resStatus === "gagal" && !isLoading){
             return <Konfirmasi type="gagal" text={message}/>
-        } else {
+        } else if (isLoading) {
             return <p>Loading...</p>
         }
     }
