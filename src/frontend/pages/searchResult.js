@@ -32,8 +32,8 @@ function SearchBar(){
             setQueryPenyakit(match1[0][2]);
             setInputValid(true);
         } else if (match2){
-            setQueryPenyakit(match2[0][1]);
-            setQueryTanggal(match2[0][2]);
+            setQueryPenyakit(match2[0][2]);
+            setQueryTanggal(match2[0][1]);
             setInputValid(true);
         }
 
